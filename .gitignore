@@ -45,10 +45,10 @@ cover/
 .env
 .venv
 venv/
-env/*.env
-ENV/*.env
+env/.env
 env.bak/
 venv.bak/
+!env/.env.example
 
 # Project-specific
 dist/

@@ -20,11 +20,10 @@ Execute to see tool command line options:
 poetry run clickhouse-migrator --help
 ```
 
-Example config file: [`env/stage.env.example`](env/stage.env.example).
-For local runs, copy the example to `.dwh/config/stage.env` (this path is gitignored in [`.gitignore`](.gitignore)).
+Example config file: [`env/.env.example`](env/.env.example).
+For local runs, copy the example to `env/.env`.
 ```shell
-mkdir -p .dwh/config
-cp env/stage.env.example .dwh/config/stage.env
+cp env/.env.example env/.env
 ```
 Required variables in the config file:
 * `ENV` - environment label (used in logs).
@@ -38,9 +37,9 @@ Required variables in the config file:
 
 ### Security
 
-When `stage.env` contains secrets, restrict file permissions:
+When `env/.env` contains secrets, restrict file permissions:
 ```shell
-chmod 600 .dwh/config/stage.env
+chmod 600 env/.env
 ```
 
 To install `clickhouse-migrator` from wheel in other project:
@@ -57,17 +56,17 @@ pip install ./dist/clickhouse_migrator-0.x.x-py3-none-any.whl
 
 Remove database if it doesn't exist on all nodes of given cluster.
 ```shell
-clickhouse-migrator clean --configfile=.dwh/config/stage.env
+clickhouse-migrator clean --configfile=env/.env
 ```
 
 Create database on all nodes of given cluster.
 ```shell
-clickhouse-migrator create_db --configfile=.dwh/config/stage.env
+clickhouse-migrator create_db --configfile=env/.env
 ```
 
 Catch up migrations to last existing version.
 ```shell  
-clickhouse-migrator migrate --configfile=.dwh/config/stage.env
+clickhouse-migrator migrate --configfile=env/.env
 ```
 
 ## Docker
@@ -80,14 +79,14 @@ docker run --rm clickhouse-migrator
 
 Run a command with a mounted config directory:
 ```shell
-docker run --rm -v $PWD/.dwh/config:/config clickhouse-migrator \
-  migrate --configfile=/config/stage.env
+docker run --rm -v $PWD/env:/env clickhouse-migrator \
+  migrate --configfile=/env/.env
 ```
 
 Run with an env file:
 ```shell
-docker run --rm --env-file ./env/stage.env.example clickhouse-migrator \
-  migrate --configfile=./env/stage.env.example
+docker run --rm --env-file ./env/.env clickhouse-migrator \
+  migrate --configfile=./env/.env
 ```
 
 ## Migration types
