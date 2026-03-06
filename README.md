@@ -4,7 +4,15 @@ We had a problem in Mitgo with delivery of clickhouse migrations to nodes of our
 
 ## Table of contents
 
-[[_TOC_]]
+- [clickhouse-migrator](#clickhouse-migrator)
+- [Build & install](#build--install)
+  - [Security](#security)
+- [Commands](#commands)
+- [Docker](#docker)
+- [Migration types](#migration-types)
+- [Tool restrictions](#tool-restrictions)
+- [Environment Variables in Migration Scripts](#environment-variables-in-migration-scripts)
+- [Maintainers](#maintainers)
 
 ## Build & install
 
@@ -108,3 +116,7 @@ Example migration script:
 CREATE USER '{{ DB_USER }}'@'%' IDENTIFIED BY '{{ DB_PASSWORD }}';
 GRANT SELECT ON {{ DATABASE_NAME }}.* TO '{{ DB_USER }}'@'%';
 ```
+
+## Maintainers
+
+* a.kolodkin@mitgo.com
