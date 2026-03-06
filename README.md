@@ -8,6 +8,7 @@ We had a problem in Mitgo with delivery of clickhouse migrations to nodes of our
   - [Security](#security)
 - [Commands](#commands)
 - [Docker](#docker)
+- [Tests](#tests)
 - [Migration types](#migration-types)
 - [Tool restrictions](#tool-restrictions)
 - [Maintainers](#maintainers)
@@ -96,6 +97,17 @@ Run with an env file:
 docker run --rm --env-file ./env/.env clickhouse-migrator \
   migrate --configfile=./env/.env
 ```
+
+## Tests
+
+Run the test suite with:
+```shell
+make test
+```
+
+The `test` target runs `poetry run pytest`.
+Shared pytest fixtures live in `tests/conftest.py`.
+Sample migration files used by tests live in `tests/fixtures/`.
 
 ## Migration types
 
