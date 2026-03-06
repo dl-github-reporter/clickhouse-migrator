@@ -4,15 +4,14 @@ We had a problem in Mitgo with delivery of clickhouse migrations to nodes of our
 
 ## Table of contents
 
-- [clickhouse-migrator](#clickhouse-migrator)
 - [Build & install](#build--install)
   - [Security](#security)
 - [Commands](#commands)
 - [Docker](#docker)
 - [Migration types](#migration-types)
 - [Tool restrictions](#tool-restrictions)
-- [Environment Variables in Migration Scripts](#environment-variables-in-migration-scripts)
 - [Maintainers](#maintainers)
+- [Environment Variables in Migration Scripts](#environment-variables-in-migration-scripts)
 
 ## Build & install
 
@@ -107,6 +106,10 @@ docker run --rm --env-file ./env/.env clickhouse-migrator \
 * Migration schema table history is analyzed only on the first host in a cluster when migrating on cluster.
 * No revert/rollback migrations are available; create a new patch to reverse changes.
 
+## Maintainers
+
+* [a.kolodkin@mitgo.com](mailto:a.kolodkin@mitgo.com)
+
 ## Environment Variables in Migration Scripts
 
 Migration scripts can use environment variables as parameters using the `{{ VARIABLE_NAME }}` placeholder format. The migrator will automatically extract these placeholders, read corresponding environment variables, and execute the query with bound parameters.
@@ -116,7 +119,3 @@ Example migration script:
 CREATE USER '{{ DB_USER }}'@'%' IDENTIFIED BY '{{ DB_PASSWORD }}';
 GRANT SELECT ON {{ DATABASE_NAME }}.* TO '{{ DB_USER }}'@'%';
 ```
-
-## Maintainers
-
-* a.kolodkin@mitgo.com
