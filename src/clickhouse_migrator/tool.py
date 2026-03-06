@@ -105,8 +105,8 @@ class MigrationTool:
             f"applied on host {list(client.connection.hosts)}"
         )
 
-        # incoming_state - загруженные миграции ("v" - инкрементальные)
-        # current_state - исторические миграции (из db.schema_migration_history)
+        # Incoming_state - loaded migrations ("v" - incremental).
+        # Current_state - historical migrations (from db.schema_migration_history).
         incoming_state = incoming_state[incoming_state.migration_type == "v"]
         current_state = self.execute_and_inflate(
             client,
@@ -122,8 +122,8 @@ class MigrationTool:
 
         state_comparison = pd.merge(current_state, incoming_state, on="version", how="outer")
 
-        # проверка есть ли исторические миграции, для которых не было загруженных с той же version
-        # c_md5 - хэш исторической миграции, md5 - хэш загруженной миграции
+        # Check for historical migrations that have no loaded migration with the same version.
+        # c_md5 - historical migration hash, md5 - loaded migration hash.
         missing_migrations = state_comparison[state_comparison.c_md5.notnull() & state_comparison.md5.isnull()]
 
         if len(missing_migrations) > 0:
@@ -139,7 +139,7 @@ class MigrationTool:
                 "use migrations to correct older migrations"
             )
 
-        # проверка есть ли исторические миграции, для которых есть загруженные, но хэши c_md5 != md5
+        # Check for historical migrations that have loaded ones, but c_md5 != md5.
         different_migrations = state_comparison[
             state_comparison.c_md5.notnull()
             & state_comparison.md5.notnull()
@@ -158,7 +158,7 @@ class MigrationTool:
                 "Do not edit migrations once run, use migrations to correct older migrations"
             )
 
-        # возвращаются миграции, у которых не было соответствия по md5 хэшу среди исторических
+        # Return migrations that have no matching md5 among historical ones.
         return state_comparison[state_comparison.c_md5.isnull()][
             ["version", "migration_type", "script", "md5", "full_path"]
         ]
@@ -169,8 +169,8 @@ class MigrationTool:
             f"on host {list(client.connection.hosts)}"
         )
 
-        # incoming_state - загруженные миграции ("r" - повторяющиеся)
-        # current_state - исторические миграции (из db.schema_migration_history)
+        # Incoming_state - loaded migrations ("r" - repeatable).
+        # Current_state - historical migrations (from db.schema_migration_history).
         incoming_state = incoming_state[incoming_state.migration_type == "r"]
         current_state = self.execute_and_inflate(
             client,
@@ -184,8 +184,8 @@ class MigrationTool:
 
         state_comparison = pd.merge(current_state, incoming_state, on="script", how="outer")
 
-        # проверка есть ли исторические миграции, для которых не было загруженных с тем же script (именем миграции)
-        # c_md5 - хэш исторической миграции, md5 - хэш загруженной миграции
+        # Check for historical migrations that have no loaded migration with the same script (migration name).
+        # c_md5 - historical migration hash, md5 - loaded migration hash.
         missing_migrations = state_comparison[state_comparison.c_md5.notnull() & state_comparison.md5.isnull()]
 
         if len(missing_migrations) > 0:
@@ -201,8 +201,8 @@ class MigrationTool:
                 "use migrations to correct older migrations."
             )
 
-        # возвращаются миграции, у которых не было соответствия по md5 хэшу среди исторических или хэш отличался
-        # то есть будут накатываться только новые или измененные повторяющиеся миграции
+        # Return migrations with no matching md5 among historical ones or with a different hash.
+        # This means only new or changed repeatable migrations will be applied.
         return state_comparison[(state_comparison.c_md5.isnull()) | (state_comparison.c_md5 != state_comparison.md5)][
             ["version", "migration_type", "script", "md5", "full_path"]]
 
@@ -246,11 +246,11 @@ class MigrationTool:
         ct = datetime.datetime.now()
         current_time = ct.strftime("%Y-%m-%d %H:%M:%S")
         
-        # Extract placeholders in format {{ PLACEHOLDER }} from the query
-        # Example: {{ POSTGRES_HOST }} -> parameter name: POSTGRES_HOST
+        # Extract placeholders in format {{ PLACEHOLDER }} from the query.
+        # Example: {{ POSTGRES_HOST }} -> parameter name: POSTGRES_HOST.
         jinja_like_pattern = r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}"
 
-        # Replace each {{ NAME }} with %(NAME)s and collect parameter names
+        # Replace each {{ NAME }} with %(NAME)s and collect parameter names.
         found_param_names = []
 
         def _replace_with_ch_param(match):
@@ -260,7 +260,7 @@ class MigrationTool:
 
         ch_param_script = re.sub(jinja_like_pattern, _replace_with_ch_param, migration_script)
 
-        # Build parameters dictionary from environment variables
+        # Build parameters dictionary from environment variables.
         parameters: Dict[str, str] = {}
         for name in set(found_param_names):
             env_value = os.getenv(name)
@@ -271,7 +271,7 @@ class MigrationTool:
                     f"Environment variable '{name}' not found for placeholder '{{{{ {name} }}}}'."
                 )
 
-        # Execute with parameters (works even if parameters is empty)
+        # Execute with parameters (works even if parameters is empty).
         client.execute(ch_param_script, parameters)
 
         while True:
@@ -294,7 +294,7 @@ class MigrationTool:
             mutations_to_inspect["match"] = mutations_to_inspect.apply(
                 lambda row: row["command"] in migration_script, axis=1
             )
-            # Correct boolean filtering: use the boolean Series directly
+            # Correct boolean filtering: use the boolean Series directly.
             mutations_to_inspect = mutations_to_inspect[mutations_to_inspect["match"]]
 
             if mutations_to_inspect.empty:

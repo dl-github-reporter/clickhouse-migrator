@@ -11,6 +11,7 @@ We had a problem in Mitgo with delivery of clickhouse migrations to nodes of our
 - [Migration types](#migration-types)
 - [Tool restrictions](#tool-restrictions)
 - [Maintainers](#maintainers)
+- [Comment style guide](#comment-style-guide)
 - [Environment Variables in Migration Scripts](#environment-variables-in-migration-scripts)
 
 ## Build & install
@@ -109,6 +110,10 @@ docker run --rm --env-file ./env/.env clickhouse-migrator \
 ## Maintainers
 
 * [a.kolodkin@mitgo.com](mailto:a.kolodkin@mitgo.com)
+
+## Comment style guide
+
+Use sentence case with a trailing period for comments. Keep comments concise and technical.
 
 ## Environment Variables in Migration Scripts
 
